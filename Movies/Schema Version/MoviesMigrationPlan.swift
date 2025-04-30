@@ -10,11 +10,16 @@ import SwiftData
 
 enum MoviesMigrationPlan: SchemaMigrationPlan {
     static var schemas: [any VersionedSchema.Type] {
-        [MovieSchemaV1.self, MovieSchemaV2.self, MovieSchemaV3.self]
+        [
+            MovieSchemaV1.self,
+            MovieSchemaV2.self,
+            MovieSchemaV3.self,
+            MovieSchemaV4.self
+        ]
     }
     
     static var stages: [MigrationStage] {
-        [migrateV1toV2, migrateV2toV3]
+        [migrateV1toV2, migrateV2toV3, migrateV3toV4]
     }
     
     static let migrateV1toV2 = MigrationStage.custom(
@@ -50,5 +55,10 @@ enum MoviesMigrationPlan: SchemaMigrationPlan {
     static let migrateV2toV3 = MigrationStage.lightweight(
         fromVersion: MovieSchemaV2.self,
         toVersion: MovieSchemaV3.self
+    )
+    
+    static let migrateV3toV4 = MigrationStage.lightweight(
+        fromVersion: MovieSchemaV3.self,
+        toVersion: MovieSchemaV4.self
     )
 }

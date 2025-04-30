@@ -18,6 +18,14 @@ enum Sheets: Identifiable {
     }
 }
 
+struct FilterSelectionConfig {
+    var movieTitle: String = ""
+    var numberOfReviews: Int?
+    var numberOfActors: Int?
+    var genre: Genre = .action
+    var filter: FilterOption = .none
+}
+
 struct MovieListScreen: View {
     
     @Environment(\.modelContext) private var context
@@ -30,6 +38,7 @@ struct MovieListScreen: View {
     @State private var actorName: String = ""
     @State private var activeSheet: Sheets?
     @State private var filterOption: FilterOption = .none
+    @State private var filterSelectionConfig = FilterSelectionConfig()
     
     private func saveActor() {
         let actor = Actor(name: actorName)
@@ -47,7 +56,11 @@ struct MovieListScreen: View {
                 }
             }
             
-            MovieListView(filterOption: filterOption)
+            Button("Clear Filters") {
+                filterSelectionConfig = FilterSelectionConfig()
+            }
+            
+            MovieListView(filterOption: filterSelectionConfig.filter)
             
             Text("Actors")
                 .font(.largeTitle)
@@ -67,7 +80,9 @@ struct MovieListScreen: View {
                 }
             }
         })
-        .sheet(item: $activeSheet, content: { activeSheet in
+        .sheet(
+item: $activeSheet,
+ content: { activeSheet in
             switch activeSheet {
             case .addMovie:
                 NavigationStack {
@@ -88,7 +103,9 @@ struct MovieListScreen: View {
                     saveActor()
                 }
             case .showFilter:
-                FilterSelectionScreen(filterOption: $filterOption)
+                FilterSelectionScreen(
+                    filterSelectionConfig: $filterSelectionConfig
+                )
             }
         })
     }
@@ -97,6 +114,9 @@ struct MovieListScreen: View {
 #Preview {
     NavigationStack {
         MovieListScreen()
-            .modelContainer(for: [Movie.self, Review.self, Actor.self])
+            .modelContainer(
+                for: [Movie.self, Review.self, Actor.self],
+                inMemory: true
+            )
     }
 }

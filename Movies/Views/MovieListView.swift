@@ -22,6 +22,12 @@ struct MovieListView: View {
             _movies = Query(filter: #Predicate<Movie> { $0.name.localizedStandardContains(movieTitle)})
         case .reviewsCount(let numberOfReviews):
             _movies = Query(filter: #Predicate<Movie> { $0.reviews.count >= numberOfReviews})
+        case .actorsCount(let numberOfActors):
+            _movies = Query(
+                filter: #Predicate<Movie> { $0.actors.count >= numberOfActors
+                })
+        case .genre(let genre):
+            _movies = Query(filter: #Predicate<Movie> { $0.genreId == genre.id})
         case .none:
             _movies = Query()
         }
@@ -49,6 +55,7 @@ struct MovieListView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             Text("\(movie.name)")
+                            Text("\(movie.genre.title)")
                             Text("Number of reviews: \(movie.reviewsCount)")
                                 .font(.caption)
                             Text("Number of actors: \(movie.actorsCount)")
